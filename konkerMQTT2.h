@@ -18,7 +18,7 @@ bool shouldSaveConfig = 0;
 String configured_mqtt_server;
 char configured_device_login[32];
 char configured_device_pass[32];
-
+char fwVersion[7]="";
 
 struct msgtuple
 {
@@ -47,7 +47,7 @@ void setTuple(MsgTuple &destiny, char chan[], char msg[]){
 
 char subChanArr[5][7] = {"fw"};
 
-
+char channelStatus[7] = "status";
 
 const char sub_dev_modifier[4] = "sub";
 const char pub_dev_modifier[4] = "pub";
@@ -609,11 +609,30 @@ void startKonkerAP(String apNome, char mqtt_server[], char device_login[], char 
 }
 
 
+void pubStatus(){
+  StaticJsonBuffer<220> jsonBuffer;
+  JsonObject& jsonMSG = jsonBuffer.createObject();
+
+
+  delay(10);
+
+  jsonMSG["deviceId"] = chipid;
+  jsonMSG["fw"] = fwVersion;
+
+  char *mensagemjson;
+  mensagemjson = buildJSONmsg(jsonMSG);
+  Serial.println("Publicando no canal:" + (String)channelStatus);
+  Serial.println("A mensagem:");
+  Serial.println(mensagemjson);
+  MQTTPUB(channelStatus, mensagemjson);
+}
+
 
 //////////////////////////////
 //função de inicialização
-void inicializacao(){
+void inicializacao(char firmwareVersion[]){
   //------------------- Montando Sistema de arquivos e copiando as configuracoes  ----------------------
+  strcpy(fwVersion,firmwareVersion);
 
   spiffsMount();
 
@@ -669,5 +688,12 @@ void inicializacao(){
 
   MQTTSUB(subChanArr);
 
+  pubStatus();
   Serial.println("Fim da inicialização");
+}
+
+
+void inicializacao(){
+  char fw[7]="undef";
+  inicializacao(fw);
 }
