@@ -322,15 +322,9 @@ int pubStatus(){
   char *mensagemjson;
   mensagemjson = buildJSONmsg(jsonMSG);
 
-  #ifdef MQTT
-    //SÓ PARA MQTT
-    return MQTTPUB(channelStatus, mensagemjson);
-  #endif
 
-  #ifdef REST
-    //SÓ PARA REST
-    return restPUB(channelStatus, mensagemjson);
-  #endif
+  return PUB(channelStatus, mensagemjson);
+
 }
 
 
@@ -396,17 +390,13 @@ int initialize(char firmwareVersion[]){
   //keep LED on
   digitalWrite(_STATUS_LED, HIGH);
 
-  #ifdef MQTT
-    //SÓ PARA MQTT
-    success=MQTTSUB(subChanArr);
-  #endif
-  #ifdef REST
-    //SÓ PARA REST
-    success=restSUB(subChanArr);
-  #endif
+
+  success=SUB(subChanArr);
 
 
-  if(pubStatus()!=1){success=0;}
+  if(pubStatus()!=1){
+    success=0;
+  }
 
   Serial.println("End of Konker lib initialization");
   return success;

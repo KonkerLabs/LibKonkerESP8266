@@ -25,7 +25,7 @@ void CheckMSGs(MsgTuple &returnTuple){
     //SÓ PARA REST
     if (millis() - previousMillis >= restSubscribePeriord) {
       previousMillis = millis();
-      restSUB(subChanArr);
+      SUB(subChanArr);
     }
 
   #endif

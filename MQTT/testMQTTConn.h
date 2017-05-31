@@ -1,4 +1,4 @@
-int testMQTTConn(String id){
+int testConn(String id){
   int result=0;
   int MQTTcode = client.state();
 
@@ -51,57 +51,28 @@ int testMQTTConn(String id){
 }
 
 
-//----------------- Funcao para conectar ao broker MQTT e reconectar quando perder a conexao --------------------------------
-int MQTTRetry(int retries, String id) {
-  int i=0;
-
-  //Loop ate estar conectado
-  while (!testMQTTConn(id)) {
-    Serial.print("Cheking connection with MQTT server...");
-    if (testMQTTConn(id)) {
-      Serial.println("Connected!");
-      received_msg=0;
-      return i;
-    } else {
-      Serial.println("Trying again in 3 seconds..");
-      // Esperando 3 segundos antes de re-conectar
-      delay(3000);
-      if (i==retries) break;
-      i++;
-    }
-}
-  return i;
-}
-
 int checkConnection(int tentatives, String id){
-
-  int result=0;
   if (WiFi.SSID()!="") {
-    //MQTTPUB
-    if (testMQTTConn(id)==0) {
-      MQTTRetry(3, id);
-      int auxTent=tentatives;
-      while (tentatives>0 && testMQTTConn(id)==0) {
-        Serial.println("Trying to reconnect.. " + String(auxTent-tentatives+1));
-        WiFi.begin();
-        delay(3000);
-        tentatives--;
-      }
-      if (tentatives<=0) {
-        Serial.println("End of tentatives");
-        result= 0;
-      }else{
-        result= 1;
-        //se teve que reconectar, faça subscribe denovo
-        MQTTSUB(subChanArr);
-
-      }
-    }else{
-      result= 1;
+    if(failedComm==0){
+      return 1;
     }
-  }else{
-    Serial.println("Wifi not configured yet");
-    result= 0;
+    Serial.println("Failed connection");
+    Serial.println("Trying to reconnect..");
+    for(int i=0;i<tentatives;i++){
+      if (testConn(id)!=0) {
+        Serial.println("Connected!");
+        failedComm=0;
+        return 1;
+      }
+      if(i+1<tentatives){
+          Serial.println("Failed! Trying again in 3 seconds.. try " + String(i+1) +" of " + String(tentatives));
+          // Esperando 3 segundos antes de re-conectar
+          delay(3000);
+      }
+    }
+    Serial.println("End of tentatives!");
+    failedComm=1;
   }
-  return result;
+  Serial.println("No wifi configured!");
+  return 0;
 }

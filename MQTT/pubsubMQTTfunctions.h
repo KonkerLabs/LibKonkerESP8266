@@ -1,35 +1,4 @@
-int MQTTSUB(char channel[]){
-  int subCode=-1;
-  char topic[32];
-
-  buildSUBTopic(configured_device_login, channel, topic);
-
-  Serial.println("Subscribing to: " + String(topic));
-  Serial.print(">");
-  subCode=client.subscribe(topic);
-
-  if (subCode!=1){
-    Serial.println("failed");
-    Serial.println("");
-  }else{
-    Serial.println("sucess");
-    Serial.println("");
-  }
-
-  return subCode;
-}
-
-int MQTTSUB(ChanTuple chanArr[]){
-  int success=1;
-  for (int i = 0; i < sizeof(chanArr)-1; i++){
-    if(strlen(chanArr[i].chan) != 0){
-      if(MQTTSUB(chanArr[i].chan)!=1){success=0;}
-    }
-  }
-  return success;
-}
-
-int MQTTPUB(char channel[], char msg[]){
+int PUB(char channel[], char msg[]){
   int pubCode=-1;
   char topic[32];
 
@@ -42,6 +11,7 @@ int MQTTPUB(char channel[], char msg[]){
   if (pubCode!=1){
     Serial.println("failed");
     Serial.println("");
+    failedComm=1;
   }else{
     Serial.println("sucess");
     Serial.println("");
@@ -50,11 +20,46 @@ int MQTTPUB(char channel[], char msg[]){
   return pubCode;
 }
 
-int MQTTPUB(MsgTuple pTuple[]){
+int PUB(MsgTuple pTuple[]){
   int size=sizeof(pTuple)/sizeof(pTuple[0]);
   for (int i = 0; i < size; i++){
     char* chan=pTuple[i].chan;
     char* msg=pTuple[i].msg;
-    MQTTPUB(chan, msg);
+    PUB(chan, msg);
   }
+}
+
+int SUB(char channel[]){
+  int subCode=-1;
+  char topic[32];
+
+  buildSUBTopic(configured_device_login, channel, topic);
+
+  Serial.println("Subscribing to: " + String(topic));
+  Serial.print(">");
+  subCode=client.subscribe(topic);
+
+  if (subCode!=1){
+    Serial.println("failed");
+    Serial.println("");
+    failedComm=1;
+  }else{
+    Serial.println("sucess");
+    Serial.println("");
+  }
+
+  return subCode;
+}
+
+int SUB(ChanTuple chanArr[]){
+  int success=1;
+  for (int i = 0; i < sizeof(chanArr)-1; i++){
+    if(strlen(chanArr[i].chan) != 0){
+      if(SUB(chanArr[i].chan)!=1){
+        success=0;
+        failedComm=1;
+      }
+    }
+  }
+  return success;
 }

@@ -8,7 +8,7 @@ int interpretHTTPCode(int httpCode){
 }
 
 
-int restPUB(char channel[], char msg[]){
+int PUB(char channel[], char msg[]){
   int pubCode=-1;
   char topic[32];
 
@@ -39,19 +39,17 @@ int restPUB(char channel[], char msg[]){
   return pubCode;
 }
 
-int restPUB(MsgTuple pTuple[]){
+int PUB(MsgTuple pTuple[]){
   int size=sizeof(pTuple)/sizeof(pTuple[0]);
   for (int i = 0; i < size; i++){
     char* chan=pTuple[i].chan;
     char* msg=pTuple[i].msg;
-    restPUB(chan, msg);
+    PUB(chan, msg);
   }
 }
 
 
-
-
-int restSUB(char channel[]){
+int SUB(char channel[]){
   int subCode=-1;
   char topic[32];
 
@@ -93,17 +91,15 @@ int restSUB(char channel[]){
    }
 
 
-
-
-
   return subCode;
 }
 
-int restSUB(ChanTuple chanArr[]){
+
+int SUB(ChanTuple chanArr[]){
   int success=1;
   for (int i = 0; i < sizeof(chanArr)-1; i++){
     if(strlen(chanArr[i].chan) != 0){
-      if(restSUB(chanArr[i].chan)!=1){
+      if(SUB(chanArr[i].chan)!=1){
         success=0;
         failedComm=1;
       }

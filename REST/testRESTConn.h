@@ -1,4 +1,4 @@
-int testRESTConn(String channel){
+int testConn(String id){
   int result=0;
 
   HTTPClient http;  //Declare an object of class HTTPClient
@@ -37,7 +37,7 @@ int checkConnection(int tentatives, String channel){
     Serial.println("Failed connection");
     Serial.println("Trying to reconnect..");
     for(int i=0;i<tentatives;i++){
-      if (testRESTConn(channel)!=0) {
+      if (testConn(channel)!=0) {
         Serial.println("Connected!");
         failedComm=0;
         return 1;
@@ -51,6 +51,6 @@ int checkConnection(int tentatives, String channel){
     Serial.println("End of tentatives!");
     failedComm=1;
   }
-  Serial.println("No wifi sonfigured!");
+  Serial.println("No wifi configured!");
   return 0;
 }

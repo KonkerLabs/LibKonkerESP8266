@@ -1,6 +1,7 @@
 //Buffer das mensagens MQTT
 char bufferJ[256];
 
+/*
 long long char2LL_old(char *str)
 {
   long long result = 0; // Initialize result
@@ -12,7 +13,7 @@ long long char2LL_old(char *str)
   }
 
   return result;
-}
+}*/
 
 
 long long char2LL(char *str)
