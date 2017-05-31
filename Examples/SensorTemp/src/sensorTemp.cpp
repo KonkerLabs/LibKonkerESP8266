@@ -1,9 +1,11 @@
-#include <FS.h>
+﻿#include <FS.h>
 #include <Arduino.h>
 #include <NTPClient.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <konkerMQTT.h>
+//you could simply change to:
+//#include <konkerREST.h> // to use REST
 
 ///variáveis de aplicação
 char firmware[7]="FW2.2";
