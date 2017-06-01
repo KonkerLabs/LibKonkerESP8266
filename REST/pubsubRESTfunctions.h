@@ -79,10 +79,10 @@ bool SUB(char channel[]){
     Serial.println("");
   }
 
+   http.end();   //Close connection
 
   if (httpCode > 0) { //Check the returning code
     String strPayload = http.getString();
-     http.end();   //Close connection
      if (strPayload!="[]"){
 #ifdef REST_IGNORE_SAME_TIMESTAMP
       long long ts =char2LL(parse_JSON_timestamp(strPayload));
