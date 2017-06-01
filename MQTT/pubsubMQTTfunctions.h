@@ -26,7 +26,7 @@ bool PUB(MsgTuple pTuple[]){
   for (int i = 0; i < size; i++){
     char* chan=pTuple[i].chan;
     char* msg=pTuple[i].msg;
-    if(!PUB(chan, msg){
+    if(!PUB(chan, msg)){
       return 0;
     }
   }
