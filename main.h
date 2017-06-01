@@ -173,7 +173,7 @@ void copyHTMLPar(char server[], char device_login[], char device_pass[], WiFiMan
 
 
 //----------------- Montando o sistema de arquivo e lendo o arquivo config.json ---------------------------
-void spiffsMount() {
+void _spiffsMount() {
 
 
   if (SPIFFS.begin()) {
@@ -218,7 +218,7 @@ void spiffsMount() {
 
 
 //----------------- Salvando arquivo de configuracao ---------------------------
-void saveConfigtoFile(char server[], char device_login[], char device_pass[]){
+void _saveConfigtoFile(char server[], char device_login[], char device_pass[]){
 
   Serial.println("Saving config to file..");
   DynamicJsonBuffer jsonBuffer;
@@ -339,7 +339,7 @@ bool initialize(char firmwareVersion[]){
   //------------------- Montando Sistema de arquivos e copiando as configuracoes  ----------------------
   strcpy(fwVersion,firmwareVersion);
 
-  spiffsMount();
+  _spiffsMount();
 
   //Criando as variaveis dentro do WiFiManager
   WiFiManagerParameter custom_server("server", "server", server, 64);
@@ -373,7 +373,7 @@ bool initialize(char firmwareVersion[]){
 
 
   Serial.println("Saving config to file....");
-  saveConfigtoFile(server, device_login, device_pass);
+  _saveConfigtoFile(server, device_login, device_pass);
   //------------------- Caso tudo mais falhe copie os dados para o FS ----------------------
   //Copiando parametros
   copyHTMLPar(server, device_login, device_pass, custom_server, custom_device_login, custom_device_pass);
@@ -381,7 +381,7 @@ bool initialize(char firmwareVersion[]){
   //Salvando Configuracao
   if (shouldSaveConfig) {
     Serial.println("Saving config to file....");
-    saveConfigtoFile(server,device_login,device_pass);
+    _saveConfigtoFile(server,device_login,device_pass);
   }
   delay(200);
 
