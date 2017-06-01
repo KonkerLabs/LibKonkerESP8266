@@ -89,10 +89,11 @@ bool SUB(char channel[]){
        if(setSUBchanNewTime(channel,ts)){
          callback(topic, strPayload);
        }
-     }
 #else
-     callback(topic, strPayload);
+      callback(topic, strPayload);
 #endif
+     }
+
      return 1;
    }else{
      return 0;
