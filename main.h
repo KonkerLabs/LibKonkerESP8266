@@ -71,7 +71,13 @@ const char sub_dev_modifier[4] = "sub";
 const char pub_dev_modifier[4] = "pub";
 
 String NAME="Sensor";
-String chipid = NAME + String(ESP.getChipId());
+
+String getChipId(){
+  return  NAME + String(ESP.getChipId());
+}
+
+
+String chipid = getChipId();
 
 
 
