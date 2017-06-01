@@ -54,5 +54,5 @@ bool CheckMSGs(MsgTuple &returnTuple){
 
 bool CheckMSGs(){
   MsgTuple returnTuple;
-  retun CheckMSGs(returnTuple);
+  return CheckMSGs(returnTuple);
 }
