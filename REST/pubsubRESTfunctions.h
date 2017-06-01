@@ -84,11 +84,15 @@ bool SUB(char channel[]){
     String strPayload = http.getString();
      http.end();   //Close connection
      if (strPayload!="[]"){
+#ifdef REST_IGNORE_SAME_TIMESTAMP
       long long ts =char2LL(parse_JSON_timestamp(strPayload));
        if(setSUBchanNewTime(channel,ts)){
          callback(topic, strPayload);
        }
      }
+#else
+     callback(topic, strPayload);
+#endif
      return 1;
    }else{
      return 0;

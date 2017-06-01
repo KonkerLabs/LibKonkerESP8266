@@ -50,6 +50,7 @@ void setSUBchan(char chan[], int time){
   }
 }
 
+#ifdef REST_IGNORE_SAME_TIMESTAMP
 int setSUBchanNewTime(char chan[], long long time){
   for (int i = 0; i < subChanSize; i++){
     if(strlen(subChanArr[i].chan) != 0){
@@ -69,3 +70,4 @@ int setSUBchanNewTime(char chan[], long long time){
   }
   return 0;
 }
+#endif
