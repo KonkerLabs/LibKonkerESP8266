@@ -1,4 +1,4 @@
-int testConn(String id){
+bool testConn(String id){
   int result=0;
 
   HTTPClient http;  //Declare an object of class HTTPClient
@@ -15,7 +15,7 @@ int testConn(String id){
   int httpCode = http.GET();                                                                  //Send the request
   Serial.println(", httpcode=" + httpCode);
   delay(1000);
-  int connectCode=interpretHTTPCode(httpCode);
+  bool connectCode=interpretHTTPCode(httpCode);
   http.end();   //Close connection
   if (connectCode==1) { //Check the returning code
     return 1;
@@ -29,7 +29,7 @@ int testConn(String id){
 
 
 
-int checkConnection(int tentatives, String channel){
+bool checkConnection(int tentatives, String channel){
   if (WiFi.SSID()!="") {
     if(failedComm==0){
       return 1;
@@ -37,7 +37,7 @@ int checkConnection(int tentatives, String channel){
     Serial.println("Failed connection");
     Serial.println("Trying to reconnect..");
     for(int i=0;i<tentatives;i++){
-      if (testConn(channel)!=0) {
+      if (!testConn(channel)) {
         Serial.println("Connected!");
         failedComm=0;
         return 1;

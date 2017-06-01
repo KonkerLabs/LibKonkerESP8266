@@ -1,4 +1,4 @@
-int PUB(char channel[], char msg[]){
+bool PUB(char channel[], char msg[]){
   int pubCode=-1;
   char topic[32];
 
@@ -12,24 +12,28 @@ int PUB(char channel[], char msg[]){
     Serial.println("failed");
     Serial.println("");
     failedComm=1;
+    return 0;
   }else{
     Serial.println("sucess");
     Serial.println("");
+    return 1;
   }
 
-  return pubCode;
 }
 
-int PUB(MsgTuple pTuple[]){
+bool PUB(MsgTuple pTuple[]){
   int size=sizeof(pTuple)/sizeof(pTuple[0]);
   for (int i = 0; i < size; i++){
     char* chan=pTuple[i].chan;
     char* msg=pTuple[i].msg;
-    PUB(chan, msg);
+    if(!PUB(chan, msg){
+      return 0;
+    }
   }
+  return 1;
 }
 
-int SUB(char channel[]){
+bool SUB(char channel[]){
   int subCode=-1;
   char topic[32];
 
@@ -43,16 +47,17 @@ int SUB(char channel[]){
     Serial.println("failed");
     Serial.println("");
     failedComm=1;
+    return 0;
   }else{
     Serial.println("sucess");
     Serial.println("");
+    return 1;
   }
 
-  return subCode;
 }
 
-int SUB(ChanTuple chanArr[]){
-  int success=1;
+bool SUB(ChanTuple chanArr[]){
+  bool success=1;
   for (int i = 0; i < sizeof(chanArr)-1; i++){
     if(strlen(chanArr[i].chan) != 0){
       if(SUB(chanArr[i].chan)!=1){

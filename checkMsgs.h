@@ -15,17 +15,21 @@ void CheckMSGChan(MsgTuple &returnTuple, char channel[]){
 }
 
 
-void CheckMSGs(MsgTuple &returnTuple){
+bool CheckMSGs(MsgTuple &returnTuple){
 
   #ifdef MQTT
     //SÓ PARA MQTT
-    client.loop();
+    if (!client.loop()){
+      return 0;
+    }
   #endif
   #ifdef REST
     //SÓ PARA REST
     if (millis() - previousMillis >= restSubscribePeriord) {
       previousMillis = millis();
-      SUB(subChanArr);
+      if (!SUB(subChanArr)){
+        return 0;
+      }
     }
 
   #endif
@@ -41,15 +45,14 @@ void CheckMSGs(MsgTuple &returnTuple){
             CheckMSGChan(returnTuple,subChanArr[i].chan);
           }
         }
-
-        return;
       }
     }
   }
+  return 1;
 }
 
 
-void CheckMSGs(){
+bool CheckMSGs(){
   MsgTuple returnTuple;
-  CheckMSGs(returnTuple);
+  retun CheckMSGs(returnTuple);
 }

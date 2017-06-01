@@ -1,4 +1,4 @@
-int testConn(String id){
+bool testConn(String id){
   int result=0;
   int MQTTcode = client.state();
 
@@ -51,7 +51,7 @@ int testConn(String id){
 }
 
 
-int checkConnection(int tentatives, String id){
+bool checkConnection(int tentatives, String id){
   if (WiFi.SSID()!="") {
     if(failedComm==0){
       return 1;
@@ -59,7 +59,7 @@ int checkConnection(int tentatives, String id){
     Serial.println("Failed connection");
     Serial.println("Trying to reconnect..");
     for(int i=0;i<tentatives;i++){
-      if (testConn(id)!=0) {
+      if (!testConn(id)) {
         Serial.println("Connected!");
         failedComm=0;
         return 1;
