@@ -14,8 +14,9 @@
 #include "subChanHelper.h"
 
 
+
 //Trigger da configuracao via Json -- Tambem precisa ser uma variavel global para rodar em duas maquinas de estado.
-bool shouldSaveConfig = 0;
+bool shouldSaveConfig = false;
 
 bool failedComm=-1;
 
@@ -128,10 +129,9 @@ String chipid = NAME + String(ESP.getChipId());
 
 //----------------- Funcao de Trigger para salvar configuracao no FS ---------------------------
 void saveConfigCallback() {
-  Serial.println("Save the configuration");
-  shouldSaveConfig = 1;
+  Serial.println("Save WiFi setings");
+  shouldSaveConfig = true;
 }
-
 
 #include "topicBuilder.h"
 
@@ -353,14 +353,14 @@ bool initialize(char firmwareVersion[]){
 
   //------------------- Configuracao do WifiManager ----------------------
   wifiManager.setTimeout(800);
-  wifiManager.setBreakAfterConfig(1);
+  //wifiManager.setBreakAfterConfig(1);
   wifiManager.setSaveConfigCallback(saveConfigCallback);
 
   wifiManager.addParameter(&custom_server);
   wifiManager.addParameter(&custom_device_login);
   wifiManager.addParameter(&custom_device_pass);
 
-
+  delay(1000);
 
   if (!checkConnection(10, chipid)) {
 
