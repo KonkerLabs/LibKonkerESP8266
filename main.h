@@ -310,7 +310,7 @@ void startKonkerAP(String apName, char server[], char device_login[], char devic
 }
 
 
-int pubStatus(){
+bool pubStatus(){
   StaticJsonBuffer<220> jsonBuffer;
   JsonObject& jsonMSG = jsonBuffer.createObject();
 
@@ -331,8 +331,8 @@ int pubStatus(){
 
 //////////////////////////////
 //função de inicialização
-int initialize(char firmwareVersion[]){
-  int success=1;
+bool initialize(char firmwareVersion[]){
+  bool success=1;
   Serial.println("Konker lib initialization");
   addSUBchan(chan0,0);
 
@@ -362,7 +362,7 @@ int initialize(char firmwareVersion[]){
 
 
 
-  if (checkConnection(10, chipid)==0) {
+  if (!checkConnection(10, chipid)) {
 
     Serial.println("Can't connect! Reseting wifi setings..");
     wifiManager.resetSettings();//SPIFFS.format();
@@ -404,7 +404,7 @@ int initialize(char firmwareVersion[]){
 }
 
 
-int initialize(){
+bool initialize(){
   char fw[7]="undef";
   return initialize(fw);
 }
