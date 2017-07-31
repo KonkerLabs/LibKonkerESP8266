@@ -1,3 +1,6 @@
+#ifndef parseURL
+#define parseURL
+
 void parseURLtoURIePath(String URL, String &URI, String &Path, String &Port){
   int doubleSlash=URL.indexOf("//",0);
   int doublePoint=-1;
@@ -48,3 +51,5 @@ void parseURLtoURIePath(String URL, String &URI, String &Path){
   String p;
   return parseURLtoURIePath(URL, URI, Path, p);
 }
+
+#endif

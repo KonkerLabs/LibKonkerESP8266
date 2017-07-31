@@ -1,17 +1,30 @@
-void CheckMSGChan(MsgTuple &returnTuple, char channel[]){
+#ifndef checkMSGmqtt_rest
+#define checkMSGmqtt_rest
+
+bool CheckMSGChan(MsgTuple &returnTuple, char channel[]){
+  #ifdef MQTT
+    //SÓ PARA MQTT
+    if (!client.loop()){
+      return 0;
+    }
+  #endif
   String payload="[]";
   if(received_msg==1){
     char topic[32];
-    buildSUBTopic(configured_device_login, channel, topic);
+    buildSUBTopic(device_login, channel, topic);
+
     if(strcmp(receivedTopic, topic)==0){
+
       payload= String(receivedTopicMsg);
     }
     received_msg=0;
+
   }
 
   if (payload!="[]"){
     setTuple(returnTuple,channel,receivedTopicMsg);
   }
+	return 1;
 }
 
 
@@ -56,3 +69,6 @@ bool CheckMSGs(){
   MsgTuple returnTuple;
   return CheckMSGs(returnTuple);
 }
+
+#endif
+

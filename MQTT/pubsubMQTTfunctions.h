@@ -1,8 +1,12 @@
-bool PUB(char channel[], char msg[]){
+#ifndef pubsubMQTTfunctions
+#define pubsubMQTTfunctions
+
+
+bool PUB(char const channel[], char const msg[]){
   int pubCode=-1;
   char topic[32];
 
-  buildPUBTopic(configured_device_login, channel, topic);
+  buildPUBTopic(device_login, channel, topic);
 
   Serial.println("Publishing to: " + String(topic) + " msg: " + msg );
   Serial.print(">");
@@ -21,12 +25,19 @@ bool PUB(char channel[], char msg[]){
 
 }
 
+bool PUB(MsgTuple pTuple){
+  char* chan=pTuple.chan;
+  char* msg=pTuple.msg;
+  if(!PUB(chan, msg)){
+    return 0;
+  }
+  return 1;
+}
+
 bool PUB(MsgTuple pTuple[]){
   int size=sizeof(pTuple)/sizeof(pTuple[0]);
   for (int i = 0; i < size; i++){
-    char* chan=pTuple[i].chan;
-    char* msg=pTuple[i].msg;
-    if(!PUB(chan, msg)){
+    if(!PUB(pTuple[i])){
       return 0;
     }
   }
@@ -37,7 +48,7 @@ bool SUB(char channel[]){
   int subCode=-1;
   char topic[32];
 
-  buildSUBTopic(configured_device_login, channel, topic);
+  buildSUBTopic(device_login, channel, topic);
 
   Serial.println("Subscribing to: " + String(topic));
   Serial.print(">");
@@ -68,3 +79,5 @@ bool SUB(ChanTuple chanArr[]){
   }
   return success;
 }
+
+#endif

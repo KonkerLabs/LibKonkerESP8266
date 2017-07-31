@@ -1,3 +1,6 @@
+#ifndef BlinkerID
+#define BlinkerID
+
 //for LED status
 #include <Ticker.h>
 Ticker _bticker;
@@ -142,3 +145,4 @@ char const *blinkMyID(String ssidName, int statusLed){
 
   return blinkMyID(ssidName);
 }
+#endif

@@ -1,23 +1,27 @@
+#ifndef testRESTConn
+#define testRESTConn
+
 bool testConn(String id){
+  Serial.println("testConn");
   int result=0;
 
   HTTPClient http;  //Declare an object of class HTTPClient
   http.addHeader("Content-Type", "application/json");
-  http.setAuthorization(configured_device_login, configured_device_pass);
-  Serial.print(" U:" + String(configured_device_login) + " P:" + String(configured_device_pass));
+  http.setAuthorization(device_login, device_pass);
+  Serial.print(" U:" + String(device_login) + " P:" + String(device_pass));
 
   char topic[32];
 
-  buildSUBTopic(configured_device_login, subChanArr[0].chan, topic);
+  buildSUBTopic(device_login, subChanArr[0].chan, topic);
 
-  Serial.print(" HTTP.GET> " + configured_server + "/" + String(topic));
-  http.begin(configured_server + "/" + String(topic)); //Specify request destination
-  int httpCode = http.GET();                                                                  //Send the request
-  Serial.println(", httpcode=" + httpCode);
-  delay(1000);
+  Serial.print(" HTTP.GET> " + server + "/" + String(topic));
+  http.begin(server + "/" + String(topic)); //Specify request destination
+  int httpCode = http.GET();
+  Serial.println(", httpcode=" + String(httpCode));
+
   bool connectCode=interpretHTTPCode(httpCode);
   http.end();   //Close connection
-  if (connectCode==1) { //Check the returning code
+  if (connectCode) { //Check the returning code
     return 1;
   }else{
     return 0;
@@ -28,7 +32,6 @@ bool testConn(String id){
 }
 
 
-
 bool checkConnection(int tentatives, String channel){
   if (WiFi.SSID()!="") {
     if(failedComm==0){
@@ -37,7 +40,7 @@ bool checkConnection(int tentatives, String channel){
     Serial.println("Failed connection");
     Serial.println("Trying to reconnect..");
     for(int i=0;i<tentatives;i++){
-      if (!testConn(channel)) {
+      if (testConn(channel)) {
         Serial.println("Connected!");
         failedComm=0;
         return 1;
@@ -54,3 +57,5 @@ bool checkConnection(int tentatives, String channel){
   Serial.println("No wifi configured!");
   return 0;
 }
+
+#endif

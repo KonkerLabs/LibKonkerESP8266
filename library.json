@@ -1,0 +1,37 @@
+{
+  "name": "LibKonkerESP8266",
+  "keywords": "Konker, ESP8266, MQTT, rest, iot",
+  "description": "ESP8266 Library for Konker enabled products",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/KonkerLabs/LibKonkerESP8266"
+  },
+  "authors":
+  [
+    {
+      "name": "Érico Netto",
+      "email": "erico@konkerlabs.com",
+      "url": "https://www.linkedin.com/in/ericonetto",
+      "maintainer": true
+    },
+    {
+      "name": "Luis Gomes Gonzales",
+      "email": "luis@konkerlabs.com"
+    }
+  ],
+  "dependencies":[
+  {
+    "name": "PubSubClient",
+    "homepage": "http://pubsubclient.knolleary.net",
+    "frameworks": "arduino"
+  },
+  {
+    "name": "ArduinoJson",
+    "authors": "Benoit Blanchon",
+    "frameworks": "arduino"
+  }],
+  "version": "1.0.1",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
