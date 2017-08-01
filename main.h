@@ -74,7 +74,7 @@ String getChipId(){
 }
 
 
-String chipid = getChipId();
+
 
 
 
