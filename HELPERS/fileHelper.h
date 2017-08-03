@@ -33,8 +33,10 @@ int openFile(String filePath, char *output){
 			File foundFile = SPIFFS.open(filePath, "r");
 			if (foundFile) {
 				Serial.println("File opened: " + filePath);
-				String contents = foundFile.readString();
-				contents.toCharArray(output, contents.length()+1);
+				//String contents = foundFile.readString();
+				//Serial.println("Contents: " + contents);
+				//contents.toCharArray(output, contents.length()+1);
+				foundFile.readBytes(output, 1024);
 				Serial.println("Contents: "  + (String)output);
 				foundFile.close();
 				return 1;
