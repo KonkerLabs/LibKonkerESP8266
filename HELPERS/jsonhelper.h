@@ -106,14 +106,6 @@ bool updateJSON(JsonObject& jsonToUpdate,  String keyNameToSave,  String itemVal
 }
 
 
-char *parse_JSON_item(JsonObject& jsonMSG, int index){
-	for (JsonObject::iterator it=jsonNewValues.begin(); it!=jsonNewValues.end(); ++it) {
-		String keyNameToSave=it->key;
-		updateJSON(jsonToUpdate,keyNameToSave,(it->value));
-	}
-}
-
-
 
 bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 	//Serial.println("Checando valores recebidos..");
