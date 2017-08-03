@@ -51,7 +51,7 @@ unsigned long previousMillis = 0;
 
 
 
-#include "TUPLES\msgTuple.h"
+#include "TUPLES/msgTuple.h"
 
 
 
@@ -125,13 +125,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 
-#include "HELPERS\topicBuilderHelper.h"
+#include "HELPERS/topicBuilderHelper.h"
 
 #ifdef MQTT
   //SÓ PARA MQTT
-  #include "MQTT\pubsubMQTTfunctions.h"
+  #include "MQTT/pubsubMQTTfunctions.h"
 
-  #include "MQTT\MQTTConn.h"
+  #include "MQTT/MQTTConn.h"
   //
 #endif
 
@@ -139,12 +139,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
   //SÓ PARA REST
   #ifdef IGNORE_SAME_REST_TIMESTAMP
     // ignorar msgs com o mesmo timestamp
-    #include "REST\pubsubRESTfunctionsTS.h"
+    #include "REST/pubsubRESTfunctionsTS.h"
   #else
-    #include "REST\pubsubRESTfunctions.h"
+    #include "REST/pubsubRESTfunctions.h"
   #endif
 
-  #include "REST\testRESTConn.h"
+  #include "REST/testRESTConn.h"
   //
 #endif
 
@@ -152,6 +152,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 #include "deviceManagement.h"
 
-#include "CHECKMSG\checkMsgs.h"
+#include "CHECKMSG/checkMsgs.h"
 
 
