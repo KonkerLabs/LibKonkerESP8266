@@ -7,10 +7,10 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 #include "BlinkerID.h"
-#include "HELPERS\parseURLHelper.h"
-#include "HELPERS\jsonhelper.h"
-#include "TUPLES\chanTuple.h"
-#include "HELPERS\subChanHelper.h"
+#include "HELPERS/parseURLHelper.h"
+#include "HELPERS/jsonhelper.h"
+#include "TUPLES/chanTuple.h"
+#include "HELPERS/subChanHelper.h"
 
 
 
