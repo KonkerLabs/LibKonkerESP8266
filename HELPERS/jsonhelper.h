@@ -106,6 +106,14 @@ bool updateJSON(JsonObject& jsonToUpdate,  String keyNameToSave,  String itemVal
 }
 
 
+char *parse_JSON_item(JsonObject& jsonMSG, int index){
+	for (JsonObject::iterator it=jsonNewValues.begin(); it!=jsonNewValues.end(); ++it) {
+		String keyNameToSave=it->key;
+		updateJSON(jsonToUpdate,keyNameToSave,(it->value));
+	}
+}
+
+
 
 bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 	//Serial.println("Checando valores recebidos..");
@@ -119,11 +127,11 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 
 
 bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
-	String fileContens;
+	char fileContens[1024];
 	//first read file...
 	Serial.println("Opening file to update");		
-	if(openFile(filePath,&fileContens)){
-		Serial.println("Parsing: " +fileContens);
+	if(openFile(filePath,fileContens)){
+		Serial.println("Parsing: " + (String)fileContens);
 	}else{
 		return 0;
 	}

@@ -26,7 +26,7 @@ void formatFileSystem(){
 }
 
 
-int openFile(String filePath, String *outputString){
+int openFile(String filePath, char *output){
 	if(spiffsMount()){
 		if (SPIFFS.exists(filePath)) {
 			Serial.println("File found: " + filePath);
@@ -34,8 +34,8 @@ int openFile(String filePath, String *outputString){
 			if (foundFile) {
 				Serial.println("File opened: " + filePath);
 				String contents = foundFile.readString();
-				Serial.println("Contents: "  + contents);
-				*outputString= contents;
+				contents.toCharArray(output, contents.length()+1);
+				Serial.println("Contents: "  + (String)output);
 				foundFile.close();
 				return 1;
 			}else{
@@ -50,7 +50,7 @@ int openFile(String filePath, String *outputString){
 }
 
 
-bool saveFile(String filePath, String dataToSave){
+bool saveFile(String filePath, char *dataToSave){
 	if(spiffsMount()){
 		File myFile = SPIFFS.open(filePath, "w");
 		if (!myFile) {
@@ -58,7 +58,7 @@ bool saveFile(String filePath, String dataToSave){
 			return 0;
 		}else{
 
-			Serial.println("Saving content: "+ dataToSave);
+			Serial.println("Saving content: "+ (String)dataToSave);
 
 			myFile.print(dataToSave);
 			myFile.close();
