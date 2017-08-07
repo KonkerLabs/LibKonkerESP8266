@@ -36,7 +36,12 @@ int received_msg=0;
 #endif
 
 //Definindo os objetos de Wifi e pubsubclient
-WiFiClient espClient;
+#ifdef konkerMQTTs
+	WiFiClientSecure espClient;
+#else
+	WiFiClient espClient;
+#endif
+
 unsigned long previousMillis = 0;
 
 #ifdef MQTT

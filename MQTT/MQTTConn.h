@@ -54,4 +54,16 @@ bool connectMQTT(String id){
 
 }
 
+#ifdef konkerMQTTs
+bool checkMQTTFingerprint(const char* fingerprint){
+  if (client.verify(fingerprint, strmqtt_server)) {
+    Serial.println("Connection secure.");
+		return 1;
+  } else {
+    Serial.println("Connection insecure! Halting execution.");
+   	return 0;
+  }
+}
+#endif
+
 #endif
