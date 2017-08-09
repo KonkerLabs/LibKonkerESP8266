@@ -10,16 +10,17 @@ bool PUB(char const channel[], char const msg[]){
 
   Serial.println("Publishing to: " + String(topic) + " msg: " + msg );
   Serial.print(">");
+  delay(200);
   pubCode=client.publish(topic, msg);
 
   if (pubCode!=1){
     Serial.println("failed");
-    Serial.println("");
+    Serial.println("pubCode:" + (String)pubCode);
     failedComm=1;
     return 0;
   }else{
     Serial.println("sucess");
-    Serial.println("");
+    Serial.println("pubCode:" + (String)pubCode);
     return 1;
   }
 
@@ -52,6 +53,7 @@ bool SUB(char channel[]){
 
   Serial.println("Subscribing to: " + String(topic));
   Serial.print(">");
+  delay(200);
   subCode=client.subscribe(topic);
 
   if (subCode!=1){

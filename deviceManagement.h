@@ -29,7 +29,7 @@ char *parseCom(String msg){
   char *RESTcmd;
   const char *cmd;
 
-  StaticJsonBuffer<2048> jsonBuffer;
+  StaticJsonBuffer<1024> jsonBuffer;
   JsonArray& array = jsonBuffer.parseArray(msg);
   JsonObject& jsonMSG = array[0]["data"];
 

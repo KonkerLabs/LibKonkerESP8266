@@ -6,8 +6,8 @@
 #include <ArduinoJson.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
-#include "BlinkerID.h"
-#include "HELPERS/parseURLHelper.h"
+//#include "BlinkerID.h"
+//#include "HELPERS/parseURLHelper.h"
 #include "HELPERS/jsonhelper.h"
 #include "TUPLES/chanTuple.h"
 #include "HELPERS/subChanHelper.h"
@@ -20,6 +20,7 @@ bool shouldSaveConfig = false;
 bool failedComm=-1;
 
 char server[64];
+int port;
 char device_login[32];
 char device_pass[32];
 char fwVersion[7]="";
@@ -31,14 +32,15 @@ int received_msg=0;
   //tópico de entrada ;
   char receivedTopic[32];
   //Buffer de entrada ;
-  char receivedTopicMsg[2048];
+  char receivedTopicMsg[1024];
 
 #endif
 
 //Definindo os objetos de Wifi e pubsubclient
 #ifdef konkerMQTTs
 	WiFiClientSecure espClient;
-#else
+#endif
+#ifndef konkerMQTTs
 	WiFiClient espClient;
 #endif
 
@@ -120,7 +122,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print("] >");
     Serial.println(payload);
     Serial.println();
-    payload.toCharArray(receivedTopicMsg, 2048);
+    payload.toCharArray(receivedTopicMsg, 1024);
 
     strncpy(receivedTopic, topic, 32);
     received_msg = 1;
@@ -158,5 +160,3 @@ void callback(char* topic, byte* payload, unsigned int length) {
 #include "deviceManagement.h"
 
 #include "CHECKMSG/checkMSGs.h"
-
-

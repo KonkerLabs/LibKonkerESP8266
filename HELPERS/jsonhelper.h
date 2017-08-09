@@ -6,7 +6,7 @@
 
 #include <ArduinoJson.h>
 //Buffer das mensagens MQTT
-char bufferJ[256];
+char bufferJ[1024];
 
 /*
 long long char2LL_old(char *str)
@@ -31,7 +31,7 @@ long long char2LL(char *str){
 		result = result + str[i] * m;
 		m=m/10;
 	}
-	
+
 	return result;
 }
 
@@ -47,7 +47,7 @@ char *buildJSONmsg(JsonObject& jsonMSG){
 //----------------- Decodificacao da mensagem Json In -----------------------------
 char *parse_JSON_item(String json, const char itemName[]){
 	const char *ival = "null";
-	StaticJsonBuffer<2048> jsonBuffer;
+	StaticJsonBuffer<1024> jsonBuffer;
 	JsonObject& jsonMSG = jsonBuffer.parseObject(json);
 	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
 	char *itemval = (char*)ival;
@@ -65,25 +65,25 @@ char *parse_JSON_item(JsonObject& jsonMSG, const char itemName[]){
 
 char  *parse_JSON_dataItem(String json, String itemName){
 	const char *ival = "null";
-	StaticJsonBuffer<2048> jsonBuffer;
+	StaticJsonBuffer<1024> jsonBuffer;
 	JsonArray& array = jsonBuffer.parseArray(json);
 	JsonObject& jsonMSG = array[0]["data"];
 	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
 	char *it = (char*) ival;
-	
+
 	return it;
 }
 
 
 void  parse_JSON_timestamp(String json, char *chrTS, int chrTSsize){
 	const char *ival = "null";
-	StaticJsonBuffer<2048> jsonBuffer;
+	StaticJsonBuffer<1024> jsonBuffer;
 	JsonArray& array = jsonBuffer.parseArray(json);
 	JsonObject& jsonMSG = array[0]["meta"];
 	if (jsonMSG.containsKey("timestamp")) ival = jsonMSG["timestamp"];
 	//char *it = (char*)ival;
 	strncpy(chrTS,(char*)ival,chrTSsize);
-	
+
 }
 
 
@@ -101,7 +101,7 @@ bool updateJSON(JsonObject& jsonToUpdate,  String keyNameToSave,  String itemVal
 	}else{
 		// Key not found... Creating it
 		jsonToUpdate.createNestedObject(keyNameToSave);
-		jsonToUpdate[keyNameToSave]=itemValue;			
+		jsonToUpdate[keyNameToSave]=itemValue;
 	}
 }
 
@@ -113,7 +113,7 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 		String keyNameToSave=it->key;
 		updateJSON(jsonToUpdate,keyNameToSave,(it->value));
 	}
-	
+
 }
 
 
@@ -121,26 +121,26 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 	char fileContens[1024];
 	//first read file...
-	Serial.println("Opening file to update");		
+	Serial.println("Opening file to update");
 	if(openFile(filePath,fileContens)){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
 		return 0;
 	}
-	
+
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& fileJson = jsonBuffer.parseObject(fileContens);
-	if (fileJson.success()) {			
-		Serial.println("Updating json readed from file");		
+	if (fileJson.success()) {
+		Serial.println("Updating json readed from file");
 		updateJSON(fileJson,jsonNewValues);
-		
+
 		Serial.println("Saving file with changed values..");
 		File myFile = SPIFFS.open(filePath, "w");
 		Serial.println("Saving...: "  + String(buildJSONmsg(fileJson)));
 		fileJson.printTo(myFile);
 		myFile.close();
-		
+
 		return 1;
 	}else{
 		Serial.println("Failed to read Json file");
@@ -149,4 +149,3 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 }
 
 #endif
-

@@ -35,8 +35,8 @@ bool SUB(MsgTuple &returnDestiny, char channel[]){
     Serial.println("strPayload=" + strPayload);
     http.end();   //Close connection
     if (strPayload!="[]"){
-      char receivedTopicMsg[2048];
-      strPayload.toCharArray(receivedTopicMsg, 2048);
+      char receivedTopicMsg[1024];
+      strPayload.toCharArray(receivedTopicMsg, 1024);
 
       setTuple(returnDestiny, channel, receivedTopicMsg);
 
