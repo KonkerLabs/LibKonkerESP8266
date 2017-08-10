@@ -23,6 +23,8 @@ char server[64];
 int port;
 char device_login[32];
 char device_pass[32];
+char prefix[32]="data";
+
 char fwVersion[7]="";
 //flag de entrada de msg
 int received_msg=0;
