@@ -72,14 +72,18 @@ char channelStatus[7] = "status";
 const char sub_dev_modifier[4] = "sub";
 const char pub_dev_modifier[4] = "pub";
 
-String NAME="Device";
+char NAME[6]="S0000";
+char ChipId[32];
 
-void setName(String newname){
-  NAME =newname;
+void setName(char newName[6]){
+  strncpy(NAME, newName,6);
+  char apName[String(ESP.getChipId()).length()+1];
+  String stringNewName=String(NAME) + String(ESP.getChipId());
+  strncpy(ChipId, stringNewName.c_str(),32);
 }
 
-String getChipId(){
-  return  NAME + String(ESP.getChipId());
+char *getChipId(){
+  return  ChipId;
 }
 
 

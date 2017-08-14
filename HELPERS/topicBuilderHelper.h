@@ -3,7 +3,7 @@
 
 void buildSUBTopic(char const device_login[], char const channel[], char *topic){
   String SString;
-  SString = String(prefix) + String("/") + String(device_login) + String(sub_dev_modifier) + String("/") + String(channel); //sub
+  SString = String(prefix) + String("/") + String(device_login) + String("/") + String(sub_dev_modifier) + String("/") + String(channel); //sub
   SString.toCharArray(topic, SString.length()+1);
 }
 
@@ -11,7 +11,7 @@ void buildSUBTopic(char const device_login[], char const channel[], char *topic)
 char *buildSUBTopic(char const channel[]){
   String SString;
 
-  SString = String(prefix) + String("/") + String(device_login) + String(sub_dev_modifier) + String("/") + String(channel); //pub
+  SString = String(prefix) + String("/") + String(device_login) + String("/") + String(sub_dev_modifier) + String("/") + String(channel); //pub
   char *topic;
   SString.toCharArray(topic, SString.length()+1);
   return topic;
@@ -19,7 +19,7 @@ char *buildSUBTopic(char const channel[]){
 
 void buildPUBTopic(char const  device_login[], char  const channel[], char *topic){
   String SString;
-  SString = String(prefix) + String("/") + String(device_login) + String(pub_dev_modifier) + String("/") + String(channel); //pub
+  SString = String(prefix) + String("/") + String(device_login) + String("/") + String(pub_dev_modifier) + String("/") + String(channel); //pub
   SString.toCharArray(topic, SString.length()+1);
 }
 
@@ -28,7 +28,7 @@ void buildPUBTopic(char const  device_login[], char  const channel[], char *topi
 char *buildPUBTopic(char const channel[]){
   String SString;
 
-  SString = String(prefix) + String("/") + String(device_login) + String(pub_dev_modifier) + String("/") + String(channel); //pub
+  SString = String(prefix) + String("/") + String(device_login) + String("/") + String(pub_dev_modifier) + String("/") + String(channel); //pub
   char *topic;
   SString.toCharArray(topic, SString.length()+1);
   return topic;
