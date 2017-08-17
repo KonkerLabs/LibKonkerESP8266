@@ -12,9 +12,9 @@ bool spiffsMount(){
 		}else{
 			Serial.println("Failed to mount file system!");
 			return 0;
-		}		
+		}
 	}else{
-  	Serial.println("File system already mounted");
+  	//Serial.println("File system already mounted");
 		return 1;
 	}
 }
@@ -26,7 +26,7 @@ void formatFileSystem(){
 }
 
 
-int openFile(String filePath, char *output){
+bool openFile(String filePath, char *output){
 	if(spiffsMount()){
 		if (SPIFFS.exists(filePath)) {
 			Serial.println("File found: " + filePath);
@@ -64,28 +64,13 @@ bool saveFile(String filePath, char *dataToSave){
 
 			myFile.print(dataToSave);
 			myFile.close();
-			Serial.println("File created!");
+			Serial.println("File saved!");
 			return 1;
 		}
 	}else{
 		Serial.println("Failed to mount file system");
 		return 0;
 	}
-}
-
-
-bool writeFile(String path, String contents){
-  Serial.print("writeFile:");
-  Serial.println(path);
-  Serial.print("contents:");
-  Serial.println(contents);
-  if(SPIFFS.exists(path)){
-    Serial.println("FILE EXISTS");
-  }
-  File file = SPIFFS.open(path, "w");
-  file.print(contents);
-  file.close();
-	return 1;
 }
 
 

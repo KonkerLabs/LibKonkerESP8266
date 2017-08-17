@@ -1,6 +1,65 @@
 #ifndef deviceManagement
 #define deviceManagement
 
+String helthMonitorFile="/health.json";
+
+
+void netFailureUpdate(){
+  int _netFailureCount=0;
+  _netFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"n"))+1;
+  if (_netFailureCount>9999){
+    _netFailureCount=0;
+  }
+
+  String json="{\"n\":" + (String)_netFailureCount + "}";
+  char charJson[12];
+  json.toCharArray(charJson, 12);
+  updateJsonFile(helthMonitorFile,charJson);
+}
+
+
+void mqttFailureUpdate(){
+  int _mqttFailureCount=0;
+  _mqttFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"p"))+1;
+  if (_mqttFailureCount>9999){
+    _mqttFailureCount=0;
+  }
+
+  String json="{\"n\":" + (String)_mqttFailureCount + "}";
+  char charJson[12];
+  json.toCharArray(charJson, 12);
+  updateJsonFile(helthMonitorFile,charJson);
+}
+
+
+void healthUpdate(char *_health_channel){
+  int _netFailureCount=0;
+  int _mqttFailureCount=0;
+
+  _netFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"n"));
+  _mqttFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"p"));
+
+  StaticJsonBuffer<50> jsonBuffer;
+  JsonObject& jsonMSG = jsonBuffer.createObject();
+
+  delay(10);
+
+	jsonMSG["chipid"] = "\"" +  String(getChipId()) + "\"";
+  jsonMSG["networkfail"] = _netFailureCount;
+  jsonMSG["pubsubfail"] = _mqttFailureCount;
+
+  char *mensagemjson;
+	mensagemjson = buildJSONmsg(jsonMSG);
+	Serial.println("Publishing on channel:" + (String)_health_channel);
+	Serial.println("The message:");
+	Serial.println(mensagemjson);
+	PUB(_health_channel, mensagemjson);
+
+}
+
+
+
+
 void checkFWUpdates(String SERVER_URI, int PORT, String BIN_PATH){
     Serial.println(SERVER_URI);
     Serial.print(BIN_PATH);
@@ -57,9 +116,9 @@ void trataMsgFw(char msg[]){
 
   if (String(type)=="update") {
     Serial.println("Checking FW");
-    String SERVER_URI=String(parse_JSON_dataItem(msg,"u"));
-    String PORT=String(parse_JSON_dataItem(msg,"p"));
-    String BIN_PATH=String(parse_JSON_dataItem(msg,"b"));
+    String SERVER_URI=String(parse_JSON_dataItem(msg,(char*)"u"));
+    String PORT=String(parse_JSON_dataItem(msg,(char*)"p"));
+    String BIN_PATH=String(parse_JSON_dataItem(msg,(char*)"b"));
 
     Serial.println("SERVER_URI:" +SERVER_URI);
     Serial.println("PORT:" +PORT);
@@ -81,7 +140,7 @@ void trataMsgFw(char msg[]){
 
 
 void trataMsgFw(char msg[]){
-  char *type = parse_JSON_item(msg,"command");
+  char *type = parse_JSON_item(msg,(char*)"command");
   Serial.println("type=" + String(type));
 
   /*if (String(type)=="reset") {
@@ -92,9 +151,9 @@ void trataMsgFw(char msg[]){
 
   if (String(type)=="update") {
     Serial.println("Checking FW");
-    String SERVER_URI=String(parse_JSON_item(msg,"u"));
-    String PORT=String(parse_JSON_item(msg,"p"));
-    String BIN_PATH=String(parse_JSON_item(msg,"b"));
+    String SERVER_URI=String(parse_JSON_item(msg,(char*)"u"));
+    String PORT=String(parse_JSON_item(msg,(char*)"p"));
+    String BIN_PATH=String(parse_JSON_item(msg,(char*)"b"));
 
     Serial.println("SERVER_URI:" +SERVER_URI);
     Serial.println("PORT:" +PORT);

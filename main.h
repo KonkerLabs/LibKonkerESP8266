@@ -90,7 +90,6 @@ char *getChipId(){
 
 
 
-
 #ifdef MQTT
 //SÓ PARA MQTT
 // Funcao de Callback

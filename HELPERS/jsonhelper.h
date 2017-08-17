@@ -44,27 +44,26 @@ char *buildJSONmsg(JsonObject& jsonMSG){
 }
 
 
+
+
+char *parse_JSON_item(JsonObject& jsonMSG, char *itemName){
+	const char *ival = NULL;
+	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
+	char *itemval = (char*)ival;
+	return itemval;
+}
+
 //----------------- Decodificacao da mensagem Json In -----------------------------
-char *parse_JSON_item(String json, const char itemName[]){
-	const char *ival = "null";
+char *parse_JSON_item(String json, char *itemName){
 	StaticJsonBuffer<1024> jsonBuffer;
 	JsonObject& jsonMSG = jsonBuffer.parseObject(json);
-	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
-	char *itemval = (char*)ival;
-	return itemval;
+	return parse_JSON_item(jsonMSG,itemName);
 }
 
 
-char *parse_JSON_item(JsonObject& jsonMSG, const char itemName[]){
-	const char *ival = "null";
-	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
-	char *itemval = (char*)ival;
-	return itemval;
-}
-
-
-char  *parse_JSON_dataItem(String json, String itemName){
-	const char *ival = "null";
+char  *parse_JSON_dataItem(String json, char *itemName){
+	const char *ival = NULL;
+	Serial.println("Parsing json item: " + (String)itemName);
 	StaticJsonBuffer<1024> jsonBuffer;
 	JsonArray& array = jsonBuffer.parseArray(json);
 	JsonObject& jsonMSG = array[0]["data"];
@@ -76,7 +75,7 @@ char  *parse_JSON_dataItem(String json, String itemName){
 
 
 void  parse_JSON_timestamp(String json, char *chrTS, int chrTSsize){
-	const char *ival = "null";
+	const char *ival = NULL;
 	StaticJsonBuffer<1024> jsonBuffer;
 	JsonArray& array = jsonBuffer.parseArray(json);
 	JsonObject& jsonMSG = array[0]["meta"];
@@ -100,6 +99,7 @@ bool updateJSON(JsonObject& jsonToUpdate,  String keyNameToSave,  String itemVal
 		}
 	}else{
 		// Key not found... Creating it
+		Serial.print("Key json not found, creating key: " + keyNameToSave);
 		jsonToUpdate.createNestedObject(keyNameToSave);
 		jsonToUpdate[keyNameToSave]=itemValue;
 	}
@@ -121,31 +121,68 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 	char fileContens[1024];
 	//first read file...
-	Serial.println("Opening file to update");
+	Serial.println("updateJsonFile, opening file to update");
 	if(openFile(filePath,fileContens)){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
+		Serial.println("Failed to open, creating it :" + filePath);
+		if(!saveFile(filePath, fileContens)){
+			Serial.println("Failed to create file : " + filePath);
+			return 0;
+		}
+	}
+
+	//updating file
+	DynamicJsonBuffer jsonBuffer;
+	JsonObject& jsonFromFile = jsonBuffer.parseObject(fileContens);
+	if (jsonFromFile.success()) {
+		Serial.println("Updating json readed from file");
+		updateJSON(jsonFromFile,jsonNewValues);
+
+		Serial.println("Saving file with changed values..");
+		return saveFile(filePath, buildJSONmsg(jsonFromFile));
+	}else{
+		Serial.println("Failed to read Json file");
 		return 0;
+	}
+}
+
+bool updateJsonFile(String filePath, String jsonString){
+	Serial.println("updateJsonFile, parsing string..");
+	//updating file
+	DynamicJsonBuffer jsonBuffer;
+	JsonObject& jsonParsed = jsonBuffer.parseObject(jsonString);
+	if (jsonParsed.success()) {
+		return updateJsonFile(filePath,jsonParsed);
+	}else{
+		Serial.println("Failed to parse Json from :" + jsonString);
+		return 0;
+	}
+
+}
+
+
+char  *getJsonItemFromFile(String filePath, char *itemName){
+	char fileContens[1024];
+	//first read file...
+	Serial.println("Opening file to read");
+	if(openFile(filePath,fileContens)){
+		Serial.println("Parsing: " + (String)fileContens);
+	}else{
+		Serial.println("Failed to open file :" + filePath);
+		return NULL;
 	}
 
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& fileJson = jsonBuffer.parseObject(fileContens);
 	if (fileJson.success()) {
-		Serial.println("Updating json readed from file");
-		updateJSON(fileJson,jsonNewValues);
-
-		Serial.println("Saving file with changed values..");
-		File myFile = SPIFFS.open(filePath, "w");
-		Serial.println("Saving...: "  + String(buildJSONmsg(fileJson)));
-		fileJson.printTo(myFile);
-		myFile.close();
-
-		return 1;
+		return parse_JSON_item(fileJson,itemName);
 	}else{
 		Serial.println("Failed to read Json file");
-		return 0;
+		return NULL;
 	}
 }
+
 
 #endif
