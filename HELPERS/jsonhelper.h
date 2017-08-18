@@ -46,18 +46,20 @@ char *buildJSONmsg(JsonObject& jsonMSG){
 
 
 
-char *parse_JSON_item(JsonObject& jsonMSG, char *itemName){
-	const char *ival = NULL;
-	if (jsonMSG.containsKey(itemName)) ival = jsonMSG[itemName];
-	char *itemval = (char*)ival;
-	return itemval;
+bool parse_JSON_item(JsonObject& jsonMSG, char *itemName, char *returnVal){
+	if (jsonMSG.containsKey(itemName)){
+		strcpy(returnVal,jsonMSG[itemName]);
+		return 1;
+	}else{
+		return 0;
+	}
 }
 
 //----------------- Decodificacao da mensagem Json In -----------------------------
-char *parse_JSON_item(String json, char *itemName){
+bool parse_JSON_item(String json, char *itemName, char *returnVal){
 	StaticJsonBuffer<1024> jsonBuffer;
 	JsonObject& jsonMSG = jsonBuffer.parseObject(json);
-	return parse_JSON_item(jsonMSG,itemName);
+	return parse_JSON_item(jsonMSG,itemName, returnVal);
 }
 
 
@@ -126,11 +128,15 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
 		Serial.println("Failed to open, creating it :" + filePath);
-		if(!saveFile(filePath, fileContens)){
+		if(!saveFile(filePath, buildJSONmsg(jsonNewValues))){
 			Serial.println("Failed to create file : " + filePath);
 			return 0;
+		}else{
+			return 1;
 		}
 	}
+
+
 
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
@@ -147,6 +153,8 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 	}
 }
 
+
+
 bool updateJsonFile(String filePath, String jsonString){
 	Serial.println("updateJsonFile, parsing string..");
 	//updating file
@@ -155,32 +163,32 @@ bool updateJsonFile(String filePath, String jsonString){
 	if (jsonParsed.success()) {
 		return updateJsonFile(filePath,jsonParsed);
 	}else{
-		Serial.println("Failed to parse Json from :" + jsonString);
+		Serial.println("Failed to open file: " + filePath);
 		return 0;
 	}
 
 }
 
 
-char  *getJsonItemFromFile(String filePath, char *itemName){
+bool  getJsonItemFromFile(String filePath, char *itemName, char *returnVal){
 	char fileContens[1024];
 	//first read file...
 	Serial.println("Opening file to read");
 	if(openFile(filePath,fileContens)){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
-		Serial.println("Failed to open file :" + filePath);
-		return NULL;
+		Serial.println("Failed to open file: " + filePath);
+		return 0;
 	}
 
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& fileJson = jsonBuffer.parseObject(fileContens);
 	if (fileJson.success()) {
-		return parse_JSON_item(fileJson,itemName);
+		return parse_JSON_item(fileJson,itemName,returnVal);
 	}else{
 		Serial.println("Failed to read Json file");
-		return NULL;
+		return 0;
 	}
 }
 

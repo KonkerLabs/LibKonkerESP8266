@@ -3,57 +3,73 @@
 
 String helthMonitorFile="/health.json";
 
+int _netFailureCount=0;
+int _mqttFailureCount=0;
 
-void netFailureUpdate(){
-  int _netFailureCount=0;
-  _netFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"n"))+1;
+void FailureUpdate(bool netFail, bool mqttFail){
+  char chrNetFail[5]="";//getJsonItemFromFile(helthMonitorFile,(char*)"n");
+  char chrMqttFail[5]="";//getJsonItemFromFile(helthMonitorFile,(char*)"m");
+
+   getJsonItemFromFile(helthMonitorFile,(char*)"n",chrNetFail);
+   getJsonItemFromFile(helthMonitorFile,(char*)"m",chrMqttFail);
+
+
+  _netFailureCount=(chrNetFail[0] != '\0') ? atoi(chrNetFail) + netFail : netFail;
+  _mqttFailureCount=(chrMqttFail[0] != '\0') ? atoi(chrMqttFail) + mqttFail : mqttFail;
+
+  //nothing to update if everithing is zero
+  if(_netFailureCount==0 && _mqttFailureCount==0){
+    return;
+  }
+
   if (_netFailureCount>9999){
-    _netFailureCount=0;
+    _netFailureCount=1;
   }
-
-  String json="{\"n\":" + (String)_netFailureCount + "}";
-  char charJson[12];
-  json.toCharArray(charJson, 12);
-  updateJsonFile(helthMonitorFile,charJson);
-}
-
-
-void mqttFailureUpdate(){
-  int _mqttFailureCount=0;
-  _mqttFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"p"))+1;
   if (_mqttFailureCount>9999){
-    _mqttFailureCount=0;
+    _mqttFailureCount=1;
   }
 
-  String json="{\"n\":" + (String)_mqttFailureCount + "}";
-  char charJson[12];
-  json.toCharArray(charJson, 12);
+  String json="{\"n\":" + (String)_netFailureCount + ",\"m\":" + (String)_mqttFailureCount + "}";
+  char charJson[24];
+  json.toCharArray(charJson, 24);
   updateJsonFile(helthMonitorFile,charJson);
 }
 
 
 void healthUpdate(char *_health_channel){
-  int _netFailureCount=0;
-  int _mqttFailureCount=0;
+  Serial.println("Health check..");
+  FailureUpdate(0,0);
 
-  _netFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"n"));
-  _mqttFailureCount=atoi(getJsonItemFromFile(helthMonitorFile,(char*)"p"));
+  //nothing to update if everithing is zero
+  if(_netFailureCount==0 && _mqttFailureCount==0){
+    return;
+  }
 
   StaticJsonBuffer<50> jsonBuffer;
   JsonObject& jsonMSG = jsonBuffer.createObject();
 
   delay(10);
 
-	jsonMSG["chipid"] = "\"" +  String(getChipId()) + "\"";
-  jsonMSG["networkfail"] = _netFailureCount;
-  jsonMSG["pubsubfail"] = _mqttFailureCount;
+	//jsonMSG["chipid"] = String(getChipId());
+  jsonMSG["networkFail"] = _netFailureCount;
+  jsonMSG["mqttFail"] = _mqttFailureCount;
 
   char *mensagemjson;
 	mensagemjson = buildJSONmsg(jsonMSG);
 	Serial.println("Publishing on channel:" + (String)_health_channel);
 	Serial.println("The message:");
 	Serial.println(mensagemjson);
-	PUB(_health_channel, mensagemjson);
+	if(PUB(_health_channel, mensagemjson)){
+
+    //IMPLEMENTING THIS CODE BELOW, THE COUNTER IS ZEROED.
+    //IF COMMENTED IT WILL ACCUMULATE
+    int _netFailureCount=0;
+    int _mqttFailureCount=0;
+    String json="{\"n\":" + (String)_netFailureCount + ",\"m\":" + (String)_mqttFailureCount + "}";
+    char charJson[24];
+    json.toCharArray(charJson, 24);
+    updateJsonFile(helthMonitorFile,charJson);
+  }
 
 }
 
@@ -140,7 +156,8 @@ void trataMsgFw(char msg[]){
 
 
 void trataMsgFw(char msg[]){
-  char *type = parse_JSON_item(msg,(char*)"command");
+  char type[64] ;
+  parse_JSON_item(msg,(char*)"command",type);
   Serial.println("type=" + String(type));
 
   /*if (String(type)=="reset") {
@@ -151,18 +168,27 @@ void trataMsgFw(char msg[]){
 
   if (String(type)=="update") {
     Serial.println("Checking FW");
-    String SERVER_URI=String(parse_JSON_item(msg,(char*)"u"));
-    String PORT=String(parse_JSON_item(msg,(char*)"p"));
-    String BIN_PATH=String(parse_JSON_item(msg,(char*)"b"));
+    char SERVER_URI[64];
+    char PORT[7];
+    char BIN_PATH[1024];
+    parse_JSON_item(msg,(char*)"u",SERVER_URI);
+    parse_JSON_item(msg,(char*)"p",PORT);
+    parse_JSON_item(msg,(char*)"b",BIN_PATH);
 
-    Serial.println("SERVER_URI:" +SERVER_URI);
-    Serial.println("PORT:" +PORT);
-    Serial.println("BIN_PATH:" +BIN_PATH);
-    if (BIN_PATH.charAt(0)!='/'){
-      BIN_PATH="/" + BIN_PATH;
+    Serial.println("SERVER_URI:" +(String)SERVER_URI);
+    Serial.println("PORT:" +(String)PORT);
+    Serial.println("BIN_PATH:" +(String)BIN_PATH);
+
+
+
+
+    if (BIN_PATH[0]!='/'){
+      char BIN_PATH_tmp[1024]={'/'};
+      strcat(BIN_PATH_tmp, BIN_PATH);
+      strcpy(BIN_PATH,BIN_PATH_tmp);
     }
 
-    checkFWUpdates(SERVER_URI, PORT.toInt(), BIN_PATH);
+    checkFWUpdates((String)SERVER_URI, atoi(PORT), (String)BIN_PATH);
   }
 }
 
