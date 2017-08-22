@@ -156,14 +156,14 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 
 
 bool updateJsonFile(String filePath, String jsonString){
-	Serial.println("updateJsonFile, parsing string..");
+	Serial.println("updateJsonFile, parsing jsonString..");
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& jsonParsed = jsonBuffer.parseObject(jsonString);
 	if (jsonParsed.success()) {
 		return updateJsonFile(filePath,jsonParsed);
 	}else{
-		Serial.println("Failed to open file: " + filePath);
+		Serial.println("Failed to parse: " + jsonString);
 		return 0;
 	}
 
