@@ -120,9 +120,7 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 
 
 
-
-
-bool updateJsonFile(String filePath, char *jsonString){
+bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 	char fileContens[1024];
 	//first read file...
 	Serial.println("updateJsonFile, opening file to update");
@@ -130,13 +128,15 @@ bool updateJsonFile(String filePath, char *jsonString){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
 		Serial.println("Failed to open, creating it :" + filePath);
-		if(!saveFile(filePath, jsonString)){
+		if(!saveFile(filePath, buildJSONmsg(jsonNewValues))){
 			Serial.println("Failed to create file : " + filePath);
 			return 0;
 		}else{
 			return 1;
 		}
 	}
+
+
 
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
@@ -151,13 +151,22 @@ bool updateJsonFile(String filePath, char *jsonString){
 		Serial.println("Failed to read Json file");
 		return 0;
 	}
-
 }
 
 
-bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
-	jsonNewValues.printTo(bufferJ, sizeof(bufferJ));
- 	return updateJsonFile(filePath, bufferJ);
+
+bool updateJsonFile(String filePath, String jsonString){
+	Serial.println("updateJsonFile, parsing string..");
+	//updating file
+	DynamicJsonBuffer jsonBuffer;
+	JsonObject& jsonParsed = jsonBuffer.parseObject(jsonString);
+	if (jsonParsed.success()) {
+		return updateJsonFile(filePath,jsonParsed);
+	}else{
+		Serial.println("Failed to open file: " + filePath);
+		return 0;
+	}
+
 }
 
 
