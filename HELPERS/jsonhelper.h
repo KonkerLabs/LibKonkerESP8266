@@ -138,11 +138,6 @@ bool updateJsonFile(String filePath, char *jsonString){
 		}
 	}
 
-bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
-	jsonNewValues.printTo(bufferJ, sizeof(bufferJ));
- 	return updateJsonFile(filePath, bufferJ);
-}
-
 	//updating file
 	DynamicJsonBuffer jsonBuffer;
 	JsonObject& jsonFromFile = jsonBuffer.parseObject(fileContens);
@@ -157,6 +152,12 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 		return 0;
 	}
 
+}
+
+
+bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
+	jsonNewValues.printTo(bufferJ, sizeof(bufferJ));
+ 	return updateJsonFile(filePath, bufferJ);
 }
 
 
