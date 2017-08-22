@@ -122,7 +122,7 @@ bool updateJSON(JsonObject& jsonToUpdate, JsonObject& jsonNewValues){
 
 
 
-bool updateJsonFile(String filePath, String jsonString){
+bool updateJsonFile(String filePath, char *jsonString){
 	char fileContens[1024];
 	//first read file...
 	Serial.println("updateJsonFile, opening file to update");
@@ -139,7 +139,8 @@ bool updateJsonFile(String filePath, String jsonString){
 	}
 
 bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
- 	return updateJsonFile(filePath, buildJSONmsg(jsonNewValues));
+	jsonNewValues.printTo(bufferJ, sizeof(bufferJ));
+ 	return updateJsonFile(filePath, bufferJ);
 }
 
 	//updating file
