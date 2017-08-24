@@ -1,6 +1,7 @@
 #ifndef deviceManagement
 #define deviceManagement
 
+
 String helthMonitorFile="/health.json";
 
 int _netFailureCount=0;
@@ -54,8 +55,9 @@ void healthUpdate(char *_health_channel){
   jsonMSG["networkFail"] = _netFailureCount;
   jsonMSG["mqttFail"] = _mqttFailureCount;
 
-  char *mensagemjson;
-	mensagemjson = buildJSONmsg(jsonMSG);
+  char mensagemjson[1024];
+	jsonMSG.printTo(bufferJ, sizeof(bufferJ));
+  strcpy(mensagemjson,bufferJ);
 	Serial.println("Publishing on channel:" + (String)_health_channel);
 	Serial.println("The message:");
 	Serial.println(mensagemjson);

@@ -5,6 +5,7 @@ bool spiffsMounted=0;
 
 bool spiffsMount(){
 	if (spiffsMounted==0){
+		Serial.println("Mounting FS");
 	  if (SPIFFS.begin()) {
 	  	Serial.println("File system mounted");
 			spiffsMounted=1;
@@ -14,7 +15,7 @@ bool spiffsMount(){
 			return 0;
 		}
 	}else{
-  	//Serial.println("File system already mounted");
+  	Serial.println("File system already mounted");
 		return 1;
 	}
 }
@@ -28,6 +29,7 @@ void formatFileSystem(){
 
 bool openFile(String filePath, char *output){
 	if(spiffsMount()){
+		Serial.println("File exists?: " + filePath);
 		if (SPIFFS.exists(filePath)) {
 			Serial.println("File found: " + filePath);
 			File foundFile = SPIFFS.open(filePath, "r");
