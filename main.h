@@ -162,6 +162,4 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 
 
-#include "deviceManagement.h"
-
 #include "CHECKMSG/checkMSGs.h"

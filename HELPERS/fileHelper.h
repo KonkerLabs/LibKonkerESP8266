@@ -5,17 +5,17 @@ bool spiffsMounted=0;
 
 bool spiffsMount(){
 	if (spiffsMounted==0){
-		Serial.println("Mounting FS");
+		//Serial.println("Mounting FS");
 	  if (SPIFFS.begin()) {
-	  	Serial.println("File system mounted");
+	  	//Serial.println("File system mounted");
 			spiffsMounted=1;
 			return 1;
 		}else{
-			Serial.println("Failed to mount file system!");
+			//Serial.println("Failed to mount file system!");
 			return 0;
 		}
 	}else{
-  	Serial.println("File system already mounted");
+  	//Serial.println("File system already mounted");
 		return 1;
 	}
 }
@@ -26,41 +26,54 @@ void formatFileSystem(){
 	}
 }
 
-
-bool openFile(String filePath, char *output){
+//use me instead
+bool readFile(String filePath, char *output, int initialPosition, int bytes){
 	if(spiffsMount()){
-		Serial.println("File exists?: " + filePath);
+		//Serial.println("File exists?: " + filePath);
 		if (SPIFFS.exists(filePath)) {
-			Serial.println("File found: " + filePath);
+			//Serial.println("File found: " + filePath);
 			File foundFile = SPIFFS.open(filePath, "r");
 			if (foundFile) {
-				Serial.println("File opened: " + filePath);
+				foundFile.seek(initialPosition, SeekSet);
+				//Serial.println("File opened: " + filePath);
 				//String contents = foundFile.readString();
 				//Serial.println("Contents: " + contents);
 				//contents.toCharArray(output, contents.length()+1);
-				foundFile.readBytes(output, 1024);
-				Serial.println("Contents: "  + (String)output);
+				foundFile.readBytes(output, bytes);
+				//Serial.println("Contents: "  + (String)output);
 				foundFile.close();
 				return 1;
 			}else{
-				Serial.println("Error writing file: "  + filePath);
+				//Serial.println("Error writing file: "  + filePath);
 				return -1;
 			}
 		}else{
-			Serial.println("File not found: " + filePath);
+			//Serial.println("File not found: " + filePath);
 			return 0;
 		}
 	}
 }
+
+bool readFile(String filePath, char *output){
+	return readFile(filePath,output,0,1024);
+}
+
+//DEPRECATED, use readFile instead
+[[deprecated]]
+bool openFile(String filePath, char *output){
+	return  readFile(filePath,output);
+};
+
 
 
 bool saveFile(String filePath, char *dataToSave){
 	if(spiffsMount()){
 		File myFile = SPIFFS.open(filePath, "w");
 		if (!myFile) {
-			Serial.println("Failed to open file to write");
+			Serial.println("Failed to open file to save");
 			return 0;
 		}else{
+			myFile.seek(0, SeekSet);
 
 			Serial.println("Saving content: "+ (String)dataToSave);
 
@@ -74,6 +87,30 @@ bool saveFile(String filePath, char *dataToSave){
 		return 0;
 	}
 }
+
+
+bool writeFile(String filePath, char *dataToSave, int position){
+	if(spiffsMount()){
+		File myFile = SPIFFS.open(filePath, "r+");
+		if (!myFile) {
+			Serial.println("Failed to open file to write");
+			return 0;
+		}else{
+			myFile.seek(position, SeekSet);
+			Serial.println("Saving content: "+ (String)dataToSave);
+
+			myFile.print(dataToSave);
+			myFile.close();
+			Serial.println("File saved!");
+			return 1;
+		}
+	}else{
+		Serial.println("Failed to mount file system");
+		return 0;
+	}
+}
+
+
 
 
 bool replaceFile(String filePath, String dataToSave){

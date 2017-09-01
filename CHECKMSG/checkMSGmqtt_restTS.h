@@ -52,11 +52,11 @@ bool CheckMSGs(MsgTuple &returnTuple){
       if(returnTuple.chan!='\0'){
 
         if (returnTuple.msg!='\0') {
-          if(strcmp(returnTuple.chan, chan0) == 0){
-            trataMsgFw(returnTuple.msg);//fixo  para sempre ser da mesma forma o update nativo
-          }else{
+          //if(strcmp(returnTuple.chan, chan0) == 0){
+          //  trataMsgFw(returnTuple.msg);//fixo  para sempre ser da mesma forma o update nativo
+          //}else{
             CheckMSGChan(returnTuple,subChanArr[i].chan);
-          }
+          //}
         }
       }
     }
@@ -71,4 +71,3 @@ bool CheckMSGs(){
 }
 
 #endif
-

@@ -124,7 +124,7 @@ bool updateJsonFile(String filePath, JsonObject& jsonNewValues){
 	char fileContens[1024];
 	//first read file...
 	Serial.println("updateJsonFile, opening file to update");
-	if(openFile(filePath,fileContens)){
+	if(readFile(filePath,fileContens)){
 		Serial.println("Parsing: " + (String)fileContens);
 	}else{
 		Serial.println("Failed to open, creating it :" + filePath);
@@ -176,7 +176,7 @@ bool  getJsonItemFromFile(String filePath, char *itemName, char *returnVal){
 	char jsonfileContens[1024];
 	//first read file...
 	Serial.println("Opening file to read");
-	if(openFile(filePath,jsonfileContens)){
+	if(readFile(filePath,jsonfileContens)){
 		Serial.println("Parsing: " + (String)jsonfileContens);
 	}else{
 		Serial.println("Failed to open file: " + filePath);
@@ -188,41 +188,6 @@ bool  getJsonItemFromFile(String filePath, char *itemName, char *returnVal){
 	JsonObject& fileJson = jsonBuffer.parseObject(jsonfileContens);
 	if (fileJson.success()) {
 		return parse_JSON_item(fileJson,itemName,returnVal);
-	}else{
-		Serial.println("Failed to read Json file");
-		return 0;
-	}
-}
-
-
-
-bool  getJsonItemsFromFile(String filePath, int numberOfItems, char **itemsName, char **returnVals){
-	char _jsonfileContens[1024];
-	//first read file...
-	Serial.println("Opening file to read: " + filePath);
-	if(openFile(filePath,_jsonfileContens)){
-		Serial.println("Parsing: " + (String)_jsonfileContens);
-	}else{
-		Serial.println("Failed to open file: " + filePath);
-		return 0;
-	}
-
-	//updating file
-	DynamicJsonBuffer jsonBuffer;
-	JsonObject& fileJson = jsonBuffer.parseObject(_jsonfileContens);
-	if (fileJson.success()) {
-		for (int i = 0; i < numberOfItems; i = i + 1) {
-			char returnVal[5];
-			//Serial.println("Parsing json item:" + (String)i);
-			//Serial.println("itemsName[i]:" + (String)itemsName[i]);
-
-			if(!parse_JSON_item(fileJson,itemsName[i],returnVal)){
-				return 0;
-			}else{
-				strcpy(returnVals[i],returnVal);
-			}
-			return 1;
-		}
 	}else{
 		Serial.println("Failed to read Json file");
 		return 0;

@@ -24,13 +24,13 @@
   {
     "name": "PubSubClient",
     "homepage": "http://pubsubclient.knolleary.net",
-		"url": "https://github.com/knolleary/pubsubclient.git",
+		"url": "https://github.com/knolleary/pubsubclient.git@dddfffb",
     "frameworks": "arduino"
   },
   {
     "name": "ArduinoJson",
     "authors": "Benoit Blanchon",
-		"url": "https://github.com/bblanchon/ArduinoJson.git",
+		"url": "https://github.com/bblanchon/ArduinoJson.git@57defe0",
     "frameworks": "arduino"
   }],
   "version": "1.0.1",
