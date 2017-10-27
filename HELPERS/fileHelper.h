@@ -26,7 +26,7 @@ void formatFileSystem(){
 	}
 }
 
-//use me instead
+//use me instead of openFile
 bool readFile(String filePath, char *output, int initialPosition, int bytes){
 	if(spiffsMount()){
 		//Serial.println("File exists?: " + filePath);
@@ -59,6 +59,7 @@ bool readFile(String filePath, char *output){
 }
 
 //DEPRECATED, use readFile instead
+//keeping it for retrocompatibility
 [[deprecated]]
 bool openFile(String filePath, char *output){
 	return  readFile(filePath,output);
@@ -89,7 +90,7 @@ bool saveFile(String filePath, char *dataToSave){
 }
 
 
-bool writeFile(String filePath, char *dataToSave, int position){
+bool appendToFile(String filePath, char *dataToSave, int position){
 	if(spiffsMount()){
 		File myFile = SPIFFS.open(filePath, "r+");
 		if (!myFile) {
@@ -111,6 +112,12 @@ bool writeFile(String filePath, char *dataToSave, int position){
 }
 
 
+//Same as appendToFile, keeping writeFile name for retrocompatibility
+//DEPRECATED, use appendToFile instead
+[[deprecated]]
+bool writeFile(String filePath, char *dataToSave, int position){
+	return appendToFile(filePath, dataToSave, position);
+}
 
 
 bool replaceFile(String filePath, String dataToSave){
