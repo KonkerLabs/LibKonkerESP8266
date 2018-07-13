@@ -119,6 +119,7 @@ bool writeFile(String filePath, char *dataToSave, int position){
 }
 bool writeFile(String filePath, char *dataToSave, int position)   __attribute__ ((deprecated("writeFile is deprecated. Use appendToFile instead!")));
 
+
 bool replaceFile(String filePath, String dataToSave){
 	if(spiffsMount()){
 		if (SPIFFS.exists(filePath)) {
