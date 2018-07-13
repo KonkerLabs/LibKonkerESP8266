@@ -26,7 +26,7 @@ void formatFileSystem(){
 	}
 }
 
-//use me instead
+//use me instead of openFile
 bool readFile(String filePath, char *output, int initialPosition, int bytes){
 	if(spiffsMount()){
 		//Serial.println("File exists?: " + filePath);
@@ -59,10 +59,11 @@ bool readFile(String filePath, char *output){
 }
 
 //DEPRECATED, use readFile instead
-[[deprecated]]
+//keeping it for retrocompatibility
 bool openFile(String filePath, char *output){
 	return  readFile(filePath,output);
 };
+bool openFile(String filePath, char *output)   __attribute__ ((deprecated("openFile is deprecated. Use readFile instead!")));
 
 
 
@@ -89,7 +90,7 @@ bool saveFile(String filePath, char *dataToSave){
 }
 
 
-bool writeFile(String filePath, char *dataToSave, int position){
+bool appendToFile(String filePath, char *dataToSave, int position){
 	if(spiffsMount()){
 		File myFile = SPIFFS.open(filePath, "r+");
 		if (!myFile) {
@@ -111,7 +112,12 @@ bool writeFile(String filePath, char *dataToSave, int position){
 }
 
 
-
+//Same as appendToFile, keeping writeFile name for retrocompatibility
+//DEPRECATED, use appendToFile instead
+bool writeFile(String filePath, char *dataToSave, int position){
+	return appendToFile(filePath, dataToSave, position);
+}
+bool writeFile(String filePath, char *dataToSave, int position)   __attribute__ ((deprecated("writeFile is deprecated. Use appendToFile instead!")));
 
 bool replaceFile(String filePath, String dataToSave){
 	if(spiffsMount()){
